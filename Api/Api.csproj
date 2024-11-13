@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.0.0" />
+    </ItemGroup>
+
+    <Target Name="GenerateSwagger" BeforeTargets="Build">
+        <Exec Command="dotnet swagger tofile --output $(OutputPath)swagger.json $(TargetPath) v1" />
+    </Target>
+    
+    <Target Name="GenerateKiotaClient" DependsOnTargets="GenerateSwagger" BeforeTargets="Build">
+        <Exec Command="dotnet kiota generate -d  $(OutputPath)swagger.json -l CSharp -n ApiClient -o ../Api.Client" />
+    </Target>
+</Project>
